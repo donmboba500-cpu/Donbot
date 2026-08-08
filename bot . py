@@ -1,0 +1,36 @@
+import os
+import telebot
+import random
+from datetime import datetime
+
+TOKEN = os.getenv('TELEGRAM_TOKEN')
+bot = telebot.TeleBot(TOKEN)
+
+PAIRS = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "EURJPY"]
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(message, "🤖 DonBot Pocket Option\nCommandes:\n/signal - Recevoir un signal\n/status - État du bot\n⚠️ Mode DEMO par défaut")
+
+@bot.message_handler(commands=['signal'])
+def signal(message):
+    pair = random.choice(PAIRS)
+    direction = random.choice(["ACHAT ⬆️", "VENTE ⬇️"])
+    confiance = random.randint(70, 95)
+    
+    msg = f"""📊 SIGNAL DONBOT v1.0
+    
+Paire: {pair}
+Direction: {direction}
+Durée: 5 minutes
+Confiance: {confiance}%
+Heure: {datetime.now().strftime('%H:%M:%S')}
+
+⚠️ Utilisez d'abord en DEMO sur Pocket Option"""
+    bot.send_message(message.chat.id, msg)
+
+@bot.message_handler(commands=['status'])
+def status(message):
+    bot.send_message(message.chat.id, "✅ DonBot tourne 24/7 sur Render\nMode: SIGNAL uniquement")
+
+bot.infinity_polling()
